@@ -25,4 +25,21 @@ module.exports = function (app) {
             + 'Tipo de música: ' + req.params.kind;
         res.send(response);
     });
+
+    app.get('/promo*', function (req, res) {
+        res.send('Respuesta al patrón promo*');
+    });
+
+    app.get('/pro*ar', function (req, res) {
+        res.send('Respuesta al patrón pro*ar');
+    });
+
+    app.post('/songs/add', function (req, res) {
+        let response = 'Canción agregada: ' + req.params.title + '<br>'
+            + ' genero: ' + req.params.kind + '<br>'
+            + ' precio: ' + req.params.price;
+
+        res.send(response);
+    });
+
 };

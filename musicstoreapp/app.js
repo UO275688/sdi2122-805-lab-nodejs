@@ -6,6 +6,10 @@ var logger = require('morgan');
 
 var app = express();
 
+let bodyParser = require('body-parser');
+app.use(bodyParser.json()); //para poder procesar JSON
+app.use(bodyParser.urlencoded({extended: true})); // para poder procesar formularios estandar
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 require("./routes/songs.js")(app);
