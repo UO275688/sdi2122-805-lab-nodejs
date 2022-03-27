@@ -1,12 +1,20 @@
 module.exports = function (app) {
     app.get("/authors", function (req, res) {
         let response = "";
-        if (req.query.name != null && typeof (req.query.name) != "no enviado en la petición")
-            response = 'Name: ' + req.query.title + '<br>'
-        if (req.query.group != null && typeof (req.query.group) != "no enviado en la petición")
-            response += 'Group: ' + req.query.title + '<br>'
-        if (req.query.rol != null && typeof (req.query.rol) != "no enviado en la petición")
-            response += 'rol: ' + req.query.author;
+        if (req.query.name != null && typeof (req.query.name) != "undefined")
+            response = 'Name: ' + req.query.name + '<br>'
+        else
+            response += 'Name: no enviado en la petición' + '<br>'
+
+        if (req.query.group != null && typeof (req.query.group) != "undefined")
+            response += 'Group: ' + req.query.group + '<br>'
+        else
+            response += 'Grupo: no enviado en la petición' + '<br>'
+
+        if (req.query.rol != null && typeof (req.query.rol) != "undefined")
+            response += 'rol: ' + req.query.rol;
+        else
+            response += 'Rol: no enviado en la petición';
 
         res.send(response);
     });
@@ -39,7 +47,6 @@ module.exports = function (app) {
     });
 
     app.get("/authors*", function(req, res) {
-
         res.redirect("/authors/");
     });
 
