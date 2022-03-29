@@ -39,11 +39,11 @@ module.exports = function (app) {
             authors: authors
         };
 
-        res.render("/authors/authors.twig", response);
+        res.render("authors/authors.twig", response);
     });
 
     app.get('/authors/add', function (req, res) {
-        res.render("/authors/add.twig");
+        res.render("authors/add.twig");
     });
 
     app.get("/authors*", function(req, res) {
