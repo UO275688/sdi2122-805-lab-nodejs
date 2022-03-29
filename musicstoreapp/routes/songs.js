@@ -1,4 +1,4 @@
-module.exports = function (app, MongoClient) {
+module.exports = function (app, songsRepository) {
     /*app.get("/songs", function (req, res) {
         let response = "";
         if (req.query.title != null && typeof (req.query.title) != "undefined")
@@ -72,6 +72,15 @@ module.exports = function (app, MongoClient) {
             kind: req.body.kind,
             price: req.body.price
         }
+        songsRepository.insertSong(song, function (songId){
+            if(songId == null) {
+                res.send("Error al insertar canción");
+            } else{
+                res.send("Agregada la cancion ID: " + songId);
+            }
+        });
+
+        /*
         MongoClient.connect(app.get('connectionStrings'), function (err, dbClient) {
             if (err) {
                 res.send("Error de conexión: " + err);
@@ -84,6 +93,6 @@ module.exports = function (app, MongoClient) {
                     .then(() => dbClient.close())
                     .catch(err => res.send("Error al insertar " + err));
             }
-        });
+        });*/
     });
 };
