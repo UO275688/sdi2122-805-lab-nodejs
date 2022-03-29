@@ -12,8 +12,14 @@ app.use(bodyParser.urlencoded({extended: true})); // para poder procesar formula
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+
+
+const { MongoClient } = require("mongodb");
+const url ='mongodb+srv://admin:pulguita*+@tiendamusica.hy8gh.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+app.set('connectionStrings', url);
+require("./routes/songs.js")(app, MongoClient);
 //require("./routes/songs.js")(app);
-require("./routes/authors.js")(app);
+//require("./routes/authors.js")(app);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
