@@ -1,4 +1,5 @@
 const {ObjectId} = require("mongodb");
+
 module.exports = function (app, songsRepository) {
     /*app.get("/songs", function (req, res) {
         let response = "";
@@ -37,7 +38,11 @@ module.exports = function (app, songsRepository) {
     });
 
     app.get('/songs/add', function (req, res) {
-        res.render("/songs/add.twig");
+        if (req.session.user == null) {
+            res.redirect("/shop");
+            return;
+        }
+        res.render("songs/add.twig");
     });
 
     app.get('/songs/:id', function (req, res) {
@@ -79,17 +84,23 @@ module.exports = function (app, songsRepository) {
         let filter = {_id: ObjectId(req.params.id)};
         let options = {};
         songsRepository.findSong(filter, options).then(song => {
-            res.render("song.twig", {song: song});
+            res.render("songs/song.twig", {song: song});
         }).catch(error => {
             res.send("Se ha producido un error al buscar la canción " + error)
         });
     })
 
     app.post('/songs/add', function (req, res) {
+        if (req.session.user == null) {
+            res.redirect("/shop");
+            return;
+        }
+
         let song = {
             title: req.body.title,
             kind: req.body.kind,
-            price: req.body.price
+            price: req.body.price,
+            author: req.session.user
         }
         songsRepository.insertSong(song, function (songId) {
             if (songId == null) {
