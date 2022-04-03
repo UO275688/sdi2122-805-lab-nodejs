@@ -7,6 +7,19 @@ module.exports = {
         this.app = app;
     },
 
+    updateSong: async function (newSong, filter, options) {
+        try {
+            const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
+            const database = client.db("musicStore");
+            const collectionName = 'songs';
+            const songsCollection = database.collection(collectionName);
+            const result = await songsCollection.updateOne(filter, {$set: newSong}, options);
+            return result;
+        } catch (error) {
+            throw (error);
+        }
+    },
+
     getSongs: async function (filter, options) {
         try {
             const client = await this.mongoClient.connect(this.app.get('connectionStrings'));
@@ -18,7 +31,8 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
-    },
+    }
+    ,
 
     //función asíncrona no puede tener return, para devolver el valor lo pasa como parametro
     insertSong: function (song, callbackFunction) {
@@ -35,7 +49,8 @@ module.exports = {
                     .catch(err => callbackFunction({error: err.message}));
             }
         });
-    },
+    }
+    ,
 
     findSong: async function (filter, options) {
         try {
