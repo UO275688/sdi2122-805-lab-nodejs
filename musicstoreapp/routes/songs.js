@@ -1,6 +1,6 @@
 const {ObjectId} = require("mongodb");
 
-module.exports = function (app, songsRepository) {
+module.exports = function (app, songsRepository, commentsRepository) {
     /*app.get("/songs", function (req, res) {
         let response = "";
         if (req.query.title != null && typeof (req.query.title) != "undefined")
@@ -80,6 +80,11 @@ module.exports = function (app, songsRepository) {
         let filter = {_id: ObjectId(req.params.id)};
         let options = {};
         songsRepository.findSong(filter, options).then(song => {
+            res.render("songs/song.twig", {song: song});
+        }).catch(error => {
+            res.send("Se ha producido un error al buscar la canción " + error)
+        });
+        commentsRepository.findComment(filter, options).then(song => {
             res.render("songs/song.twig", {song: song});
         }).catch(error => {
             res.send("Se ha producido un error al buscar la canción " + error)
@@ -203,7 +208,7 @@ module.exports = function (app, songsRepository) {
                 }
             });
         } else {
-            callback(true); // FIN
+            callback(true); //FIN
         }
     };
 }
