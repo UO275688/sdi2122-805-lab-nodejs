@@ -32,7 +32,7 @@ module.exports = function (app, usersRepository) {
         });
     });
 
-    app.pos('/users/login', function (req, res) {
+    app.post('/users/login', function (req, res) {
         let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
 
