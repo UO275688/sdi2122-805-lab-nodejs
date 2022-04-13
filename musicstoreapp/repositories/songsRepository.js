@@ -72,7 +72,7 @@ module.exports = {
             const songsCollectionCount = await songsCollection.count();
             const cursor = songsCollection.find(filter, options).skip((page - 1) * limit).limit(limit)
             const songs = await cursor.toArray();
-            const result = {songs: songs, total: songsCollectionCount};
+            const result = {songs: songs, total: songsCollectionCount}
             return result;
         } catch (error) {
             throw (error);
@@ -90,8 +90,7 @@ module.exports = {
         } catch (error) {
             throw (error);
         }
-    }
-    ,
+    },
 
     //función asíncrona no puede tener return, para devolver el valor lo pasa como parametro
     insertSong: function (song, callbackFunction) {

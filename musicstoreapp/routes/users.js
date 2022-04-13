@@ -7,15 +7,6 @@ module.exports = function (app, usersRepository) {
         res.render("signup.twig");
     })
 
-    app.get('/users/login', function (req, res) {
-        res.render("login.twig");
-    })
-
-    app.get('/users/logout', function (req, res) {
-        req.session.user = null;
-        res.send("El usuario se ha desconectado correctamente");
-    })
-
     app.post('/users/signup', function (req, res) {
         let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
@@ -34,6 +25,10 @@ module.exports = function (app, usersRepository) {
         });
     });
 
+    app.get('/users/login', function (req, res) {
+        res.render("login.twig");
+    })
+
     app.post('/users/login', function (req, res) {
         let securePassword = app.get("crypto").createHmac('sha256', app.get('clave'))
             .update(req.body.password).digest('hex');
@@ -44,7 +39,7 @@ module.exports = function (app, usersRepository) {
         }
 
         let options = {};
-        usersRepository.findUser(filer, options).then(user => {
+        usersRepository.findUser(filter, options).then(user => {
             if (user == null) {
                 req.session.user = null;
                 //res.send("Usuario no identificado");
@@ -59,4 +54,13 @@ module.exports = function (app, usersRepository) {
             res.redirect("/users/login" + "?message=Se ha producido un error al buscar el usuario"+ "&messageType=alert-danger ");
         })
     })
+
+    app.get('/users/logout', function (req, res) {
+        req.session.user = null;
+        res.send("El usuario se ha desconectado correctamente");
+    })
+
+
+
+
 };

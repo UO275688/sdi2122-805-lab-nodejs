@@ -13,8 +13,20 @@ app.use(expressSession({
     saveUninitialized: true
 }));
 
-let crypto = require('crypto');
+const userSessionRouter = require('./routes/userSessionRouter');
+const userAudiosRouter = require('./routes/userAudiosRouter');
+app.use("/songs/add", userSessionRouter);
+app.use("/publications", userSessionRouter);
+app.use("/songs/buy", userSessionRouter);
+app.use("/purchases", userSessionRouter);
+app.use("/audios/", userAudiosRouter);
+app.use("/shop/", userSessionRouter);
 
+const userAuthorRouter = require('./routes/userAuthorRouter');
+app.use("/songs/edit", userAuthorRouter);
+app.use("/songs/delete", userAuthorRouter);
+
+let crypto = require('crypto');
 let fileUpload = require('express-fileupload');
 app.use(fileUpload({limits: {fileSize: 50 * 1024 * 1024}, createParentPath: true}));
 
@@ -26,41 +38,30 @@ let bodyParser = require('body-parser');
 app.use(bodyParser.json()); //para poder procesar JSON
 app.use(bodyParser.urlencoded({extended: true})); // para poder procesar formularios estandar
 
-const {MongoClient} = require("mongodb");
-const usersRepository = require("./repositories/usersRepository.js");
-usersRepository.init(app, MongoClient);
-require("./routes/users.js")(app, usersRepository);
-
 let indexRouter = require('./routes/index');
+//require("./routes/songs.js")(app);
+//require("./routes/authors.js")(app);
 
-const url = 'mongodb+srv://admin:sdi@tiendamusical.hy8gh.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
-
+const {MongoClient} = require("mongodb");
+const url = "mongodb+srv://admin:sdi@tiendamusical.xtcgh.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";//'mongodb+srv://admin:sdi@tiendamusical.hy8gh.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
 app.set('connectionStrings', url);
 
-const userSessionRouter = require('./routes/userSessionRouter');
-const userAudiosRouter = require('./routes/userAudiosRouter');
-
-app.use("/songs/add", userSessionRouter);
-app.use("/publications", userSessionRouter);
-app.use("/songs/buy", userSessionRouter);
-app.use("/purchases", userSessionRouter);
-app.use("/audios/", userAudiosRouter);
-app.use("/shop/", userSessionRouter)
-
-const userAuthorRouter = require('./routes/userAuthorRouter');
-app.use("/songs/edit", userAuthorRouter);
-app.use("/songs/delete", userAuthorRouter);
+let commentsRepository = require("./repositories/commentsRepository.js");
+commentsRepository.init(app, MongoClient);
+require("./routes/comments.js")(app, commentsRepository);
 
 const songsRepository = require("./repositories/songsRepository.js");
 songsRepository.init(app, MongoClient);
 require("./routes/songs.js")(app, songsRepository);
+require("./routes/songs.js")(app, songsRepository, commentsRepository);
 
-//require("./routes/songs.js")(app);
-//require("./routes/authors.js")(app);
+const usersRepository = require("./repositories/usersRepository.js");
+usersRepository.init(app, MongoClient);
+require("./routes/users.js")(app, usersRepository);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'twig');
 
 app.use(logger('dev'));
 app.use(express.json());
