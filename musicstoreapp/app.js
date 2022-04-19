@@ -4,7 +4,9 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var app = express();
+let app = express();
+let jwt = require('jsonwebtoken');
+app.set('jwt', jwt);
 
 let expressSession = require('express-session');
 app.use(expressSession({
@@ -25,6 +27,9 @@ app.use("/shop/", userSessionRouter);
 const userAuthorRouter = require('./routes/userAuthorRouter');
 app.use("/songs/edit", userAuthorRouter);
 app.use("/songs/delete", userAuthorRouter);
+
+const userTokenRouter = require('./routes/userTokenRouter');
+app.use("/api/v1.0/songs/", userTokenRouter);
 
 let crypto = require('crypto');
 let fileUpload = require('express-fileupload');
@@ -54,11 +59,11 @@ const songsRepository = require("./repositories/songsRepository.js");
 songsRepository.init(app, MongoClient);
 require("./routes/songs.js")(app, songsRepository);
 require("./routes/songs.js")(app, songsRepository, commentsRepository);
-require("./routes/api/songsAPIv1.0.js")(app, songsRepository);
 
 const usersRepository = require("./repositories/usersRepository.js");
 usersRepository.init(app, MongoClient);
 require("./routes/users.js")(app, usersRepository);
+require("./routes/api/songsAPIv1.0.js")(app, songsRepository, usersRepository);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
