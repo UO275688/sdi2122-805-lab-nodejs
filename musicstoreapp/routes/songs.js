@@ -164,20 +164,21 @@ module.exports = function (app, songsRepository, commentsRepository) {
         let options = {};
 
         songsRepository.findSong(filter, options).then(song => {
-            let authorEqualsUser = song.author == req.session.user;
-
-            commentsRepository.getComments(filterComments, options).then(comments => {
+            let settings = {
+                url: "https://www.freeforexapi.com/api/live?pairs=EURUSD",
+                method: "get",
+                headers: {"token": "ejemplo",}
+            }
+            let rest = app.get("rest");
+            rest(settings, function (error, response, body) {
+                console.log("cod: " + response.statusCode + " Cuerpo :" + body);
+                let responseObject = JSON.parse(body);
+                let rateUSD = responseObject.rates.EURUSD.rate;
+                // nuevo campo "usd" redondeado a dos decimales
+                let songValue = rateUSD * song.price;
+                song.usd = Math.round(songValue * 100) / 100;
                 res.render("songs/song.twig", {song: song, comments: comments});
-                songsRepository.getPurchases(filterUser, options).then(purchases => {
-                    let sameSong = purchases.find(song2 => song2.songId.equals(song._id))
-                    if (sameSong == null)
-                        authorEqualsUser = false;
-                    else
-                        authorEqualsUser = true;
-                    res.render("songs/song.twig", {song: song, comments: comments, author: authorEqualsUser});
-                    }
-                )
-            });
+            })
         }).catch(error => {
             res.send("Se ha producido un error al buscar la canción " + error)
         });
@@ -219,7 +220,7 @@ module.exports = function (app, songsRepository, commentsRepository) {
 
             songsRepository.getPurchases(filterUser, options).then(purchasedIds => {
                 let sameSong = purchasedIds.find(song2 => song2.songId.equals(song._id))
-                if (sameSong == null){
+                if (sameSong == null) {
                     authorEqualsUser = false;
                     songsRepository.buySong(shop, function (shopId) {
                         if (shopId == null) {
@@ -228,8 +229,7 @@ module.exports = function (app, songsRepository, commentsRepository) {
                             res.redirect("/purchases");
                         }
                     })
-                }
-                else {
+                } else {
                     authorEqualsUser = true;
                     res.send("Error: Ya ha sido comprado o eres su propietario")
                 }
